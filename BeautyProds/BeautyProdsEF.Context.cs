@@ -25,12 +25,8 @@ namespace BeautyProds
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Vendor> Vendors { get; set; }
         public virtual DbSet<Bottle> Bottles { get; set; }
         public virtual DbSet<BottleRequest> BottleRequests { get; set; }
-        public virtual DbSet<Vendor> Vendors { get; set; }
-
-        public System.Data.Entity.DbSet<BeautyProds.Models._BottleRequest> _BottleRequest { get; set; }
-
-        public System.Data.Entity.DbSet<BeautyProds.Models._Vendor> _Vendor { get; set; }
     }
 }

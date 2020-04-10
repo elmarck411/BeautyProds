@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+            integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+            crossorigin="anonymous"></script>
+    <meta charset="utf-8" />
+    <script>
+        var uri = 'api/BottleRequests';
+        $(document).ready(function () {
+      // Send an AJAX request
+      $.getJSON(uri)
+          .done(function (data) {
+            // On success, 'data' contains a list of BottleRequests.
+              $.each(data, function (key, item) {
+                  alert("OK");
+              // Add a list item for the product.
+            /*  $('<li>', { text: item.ReqQuantity }).appendTo($('#bottleRequests'));*/
+            });
+          });
+    });
+    </script>
+
+    <title></title>
+</head>
+<body>
+    <h2>All Products</h2>
+    <ul id="bottleRequests" />
+</body>
+</html>

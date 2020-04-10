@@ -14,11 +14,16 @@ namespace BeautyProds
     
     public partial class Bottle
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Bottle()
+        {
+            this.BottleRequests = new HashSet<BottleRequest>();
+        }
+    
         public int ID { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public int VendorID { get; set; }
     
-        public virtual Vendor Vendor { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BottleRequest> BottleRequests { get; set; }
     }
 }

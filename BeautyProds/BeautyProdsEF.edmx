@@ -4,15 +4,13 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="BeautyProdsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="BeautyProdsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Bottle">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nchar" MaxLength="10" Nullable="false" />
-          <Property Name="Description" Type="nchar" MaxLength="10" />
-          <Property Name="VendorID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" Nullable="false" />
         </EntityType>
         <EntityType Name="BottleRequest">
           <Key>
@@ -23,6 +21,7 @@
           <Property Name="ReqQuantity" Type="bigint" Nullable="false" />
           <Property Name="DueDate" Type="datetime" Nullable="false" />
           <Property Name="SendNotification" Type="tinyint" Nullable="false" />
+          <Property Name="BottleID" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Vendor">
           <Key>
@@ -33,15 +32,15 @@
           <Property Name="Address" Type="nvarchar" MaxLength="250" />
           <Property Name="ContactEmail" Type="nvarchar" MaxLength="250" Nullable="false" />
         </EntityType>
-        <Association Name="FK_Bottle_Vendor">
-          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
-          <End Role="Bottle" Type="Self.Bottle" Multiplicity="*" />
+        <Association Name="FK_BottleRequest_Bottle">
+          <End Role="Bottle" Type="Self.Bottle" Multiplicity="1" />
+          <End Role="BottleRequest" Type="Self.BottleRequest" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Vendor">
+            <Principal Role="Bottle">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Bottle">
-              <PropertyRef Name="VendorID" />
+            <Dependent Role="BottleRequest">
+              <PropertyRef Name="BottleID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -61,29 +60,49 @@
           <EntitySet Name="Bottle" EntityType="Self.Bottle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BottleRequest" EntityType="Self.BottleRequest" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Vendor" EntityType="Self.Vendor" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Bottle_Vendor" Association="Self.FK_Bottle_Vendor">
-            <End Role="Vendor" EntitySet="Vendor" />
+          <AssociationSet Name="FK_BottleRequest_Bottle" Association="Self.FK_BottleRequest_Bottle">
             <End Role="Bottle" EntitySet="Bottle" />
+            <End Role="BottleRequest" EntitySet="BottleRequest" />
           </AssociationSet>
           <AssociationSet Name="FK_BottleRequest_Vendor" Association="Self.FK_BottleRequest_Vendor">
             <End Role="Vendor" EntitySet="Vendor" />
             <End Role="BottleRequest" EntitySet="BottleRequest" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="BeautyProdsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Vendor">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Address" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ContactEmail" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="BottleRequests" Relationship="BeautyProdsModel.FK_BottleRequest_Vendor" FromRole="Vendor" ToRole="BottleRequest" />
+        </EntityType>
+        <EntityContainer Name="BeautyProdsEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Vendors" EntityType="Self.Vendor" />
+          <EntitySet Name="Bottles" EntityType="BeautyProdsModel.Bottle" />
+          <EntitySet Name="BottleRequests" EntityType="BeautyProdsModel.BottleRequest" />
+          <AssociationSet Name="FK_BottleRequest_Bottle" Association="BeautyProdsModel.FK_BottleRequest_Bottle">
+            <End Role="Bottle" EntitySet="Bottles" />
+            <End Role="BottleRequest" EntitySet="BottleRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BottleRequest_Vendor" Association="BeautyProdsModel.FK_BottleRequest_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="BottleRequest" EntitySet="BottleRequests" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="Bottle">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
-          <Property Name="VendorID" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Vendor" Relationship="Self.FK_Bottle_Vendor" FromRole="Bottle" ToRole="Vendor" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="BottleRequests" Relationship="BeautyProdsModel.FK_BottleRequest_Bottle" FromRole="Bottle" ToRole="BottleRequest" />
         </EntityType>
         <EntityType Name="BottleRequest">
           <Key>
@@ -94,34 +113,25 @@
           <Property Name="ReqQuantity" Type="Int64" Nullable="false" />
           <Property Name="DueDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="SendNotification" Type="Byte" Nullable="false" />
-          <NavigationProperty Name="Vendor" Relationship="Self.FK_BottleRequest_Vendor" FromRole="BottleRequest" ToRole="Vendor" />
+          <Property Name="BottleID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Bottle" Relationship="BeautyProdsModel.FK_BottleRequest_Bottle" FromRole="BottleRequest" ToRole="Bottle" />
+          <NavigationProperty Name="Vendor" Relationship="BeautyProdsModel.FK_BottleRequest_Vendor" FromRole="BottleRequest" ToRole="Vendor" />
         </EntityType>
-        <EntityType Name="Vendor">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Company" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Address" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="ContactEmail" Type="String" MaxLength="250" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Bottles" Relationship="Self.FK_Bottle_Vendor" FromRole="Vendor" ToRole="Bottle" />
-          <NavigationProperty Name="BottleRequests" Relationship="Self.FK_BottleRequest_Vendor" FromRole="Vendor" ToRole="BottleRequest" />
-        </EntityType>
-        <Association Name="FK_Bottle_Vendor">
-          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
-          <End Role="Bottle" Type="Self.Bottle" Multiplicity="*" />
+        <Association Name="FK_BottleRequest_Bottle">
+          <End Type="BeautyProdsModel.Bottle" Role="Bottle" Multiplicity="1" />
+          <End Type="BeautyProdsModel.BottleRequest" Role="BottleRequest" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Vendor">
+            <Principal Role="Bottle">
               <PropertyRef Name="ID" />
             </Principal>
-            <Dependent Role="Bottle">
-              <PropertyRef Name="VendorID" />
+            <Dependent Role="BottleRequest">
+              <PropertyRef Name="BottleID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_BottleRequest_Vendor">
-          <End Role="Vendor" Type="Self.Vendor" Multiplicity="1" />
-          <End Role="BottleRequest" Type="Self.BottleRequest" Multiplicity="*" />
+          <End Type="BeautyProdsModel.Vendor" Role="Vendor" Multiplicity="1" />
+          <End Type="BeautyProdsModel.BottleRequest" Role="BottleRequest" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Vendor">
               <PropertyRef Name="ID" />
@@ -131,46 +141,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="BeautyProdsEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Bottles" EntityType="Self.Bottle" />
-          <EntitySet Name="BottleRequests" EntityType="Self.BottleRequest" />
-          <EntitySet Name="Vendors" EntityType="Self.Vendor" />
-          <AssociationSet Name="FK_Bottle_Vendor" Association="Self.FK_Bottle_Vendor">
-            <End Role="Vendor" EntitySet="Vendors" />
-            <End Role="Bottle" EntitySet="Bottles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_BottleRequest_Vendor" Association="Self.FK_BottleRequest_Vendor">
-            <End Role="Vendor" EntitySet="Vendors" />
-            <End Role="BottleRequest" EntitySet="BottleRequests" />
-          </AssociationSet>
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="BeautyProdsModelStoreContainer" CdmEntityContainer="BeautyProdsEntities">
-          <EntitySetMapping Name="Bottles">
-            <EntityTypeMapping TypeName="BeautyProdsModel.Bottle">
-              <MappingFragment StoreEntitySet="Bottle">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="VendorID" ColumnName="VendorID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="BottleRequests">
-            <EntityTypeMapping TypeName="BeautyProdsModel.BottleRequest">
-              <MappingFragment StoreEntitySet="BottleRequest">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="VendorID" ColumnName="VendorID" />
-                <ScalarProperty Name="ReqQuantity" ColumnName="ReqQuantity" />
-                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
-                <ScalarProperty Name="SendNotification" ColumnName="SendNotification" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Vendors">
             <EntityTypeMapping TypeName="BeautyProdsModel.Vendor">
               <MappingFragment StoreEntitySet="Vendor">
@@ -178,6 +154,26 @@
                 <ScalarProperty Name="Company" ColumnName="Company" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Bottles">
+            <EntityTypeMapping TypeName="BeautyProdsModel.Bottle">
+              <MappingFragment StoreEntitySet="Bottle">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BottleRequests">
+            <EntityTypeMapping TypeName="BeautyProdsModel.BottleRequest">
+              <MappingFragment StoreEntitySet="BottleRequest">
+                <ScalarProperty Name="BottleID" ColumnName="BottleID" />
+                <ScalarProperty Name="SendNotification" ColumnName="SendNotification" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="ReqQuantity" ColumnName="ReqQuantity" />
+                <ScalarProperty Name="VendorID" ColumnName="VendorID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -17,7 +17,6 @@ namespace BeautyProds
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Vendor()
         {
-            this.Bottles = new HashSet<Bottle>();
             this.BottleRequests = new HashSet<BottleRequest>();
         }
     
@@ -26,8 +25,6 @@ namespace BeautyProds
         public string Address { get; set; }
         public string ContactEmail { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Bottle> Bottles { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BottleRequest> BottleRequests { get; set; }
     }

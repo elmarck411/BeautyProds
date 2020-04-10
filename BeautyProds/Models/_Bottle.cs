@@ -9,9 +9,6 @@ namespace BeautyProds.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public int VendorID { get; set; }
-
-        public virtual _Vendor Vendor { get; set; }
+        public virtual ICollection<_BottleRequest> BottleRequests { get; set; }
     }
 }

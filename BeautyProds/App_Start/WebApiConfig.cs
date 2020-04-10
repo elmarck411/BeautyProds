@@ -20,5 +20,6 @@ namespace BeautyProds
                 defaults: new { id = RouteParameter.Optional }
             );
         }
+        
     }
 }

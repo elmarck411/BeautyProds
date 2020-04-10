@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using BeautyProds;
+using BeautyProds.Models;
 
 namespace BeautyProds.Controllers
 {
@@ -20,7 +21,8 @@ namespace BeautyProds.Controllers
         // GET: api/BottleRequests
         public IQueryable<BottleRequest> GetBottleRequests()
         {
-            return db.BottleRequests;
+            var bottleRequests = db.BottleRequests.Include(br => br.Vendor).Include(br => br.Bottle);
+            return bottleRequests;
         }
 
         // GET: api/BottleRequests/5

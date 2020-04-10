@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoMapper;
+using BeautyProds.Profiles;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,6 +20,13 @@ namespace BeautyProds
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            var config = new MapperConfiguration(cfg => 
+            {
+                cfg.AddProfile(new BottleProfile());
+            });
+            
+               
         }
+        public override 
     }
 }

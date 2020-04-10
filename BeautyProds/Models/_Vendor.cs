@@ -13,7 +13,6 @@ namespace BeautyProds.Models
         public string Address { get; set; }
         public string ContactEmail { get; set; }
 
-        public virtual ICollection<_Bottle> Bottles { get; set; }
         public virtual ICollection<_BottleRequest> BottleRequests { get; set; }
     }
 }
