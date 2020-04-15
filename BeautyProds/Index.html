@@ -14,9 +14,9 @@
           .done(function (data) {
             // On success, 'data' contains a list of BottleRequests.
               $.each(data, function (key, item) {
-                  alert("OK");
-              // Add a list item for the product.
-            /*  $('<li>', { text: item.ReqQuantity }).appendTo($('#bottleRequests'));*/
+                  //alert("OK");
+               //Add a list item for the product.
+              $('<li>', { text: item.ReqQuantity  + " " + item.Vendor.Company}).appendTo($('#bottleRequests'));
             });
           });
     });

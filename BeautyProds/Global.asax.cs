@@ -20,13 +20,6 @@ namespace BeautyProds
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            var config = new MapperConfiguration(cfg => 
-            {
-                cfg.AddProfile(new BottleProfile());
-            });
-            
-               
         }
-        public override 
     }
 }

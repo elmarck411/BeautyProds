@@ -9,19 +9,33 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using AutoMapper;
+using AutoMapper.Configuration;
 using BeautyProds;
 using BeautyProds.Models;
+using BeautyProds.Profiles;
 
 namespace BeautyProds.Controllers
 {
     public class BottleRequestsController : ApiController
     {
         private BeautyProdsEntities db = new BeautyProdsEntities();
+        private MapperConfiguration _Mapperconfig;
+        private IMapper _Mapper = null;
+        public BottleRequestsController()
+        {
+            var configExpression = new MapperConfigurationExpression();
+            configExpression.AddProfile<BottleProfile>();
+            configExpression.AddProfile<BottleRequestProfile>();
+            configExpression.AddProfile<VendorProfile>();
+            _Mapperconfig = new MapperConfiguration(configExpression);
+            _Mapper = _Mapperconfig.CreateMapper();
+        }
 
         // GET: api/BottleRequests
-        public IQueryable<BottleRequest> GetBottleRequests()
+        public IEnumerable<_BottleRequest> GetBottleRequests()
         {
-            var bottleRequests = db.BottleRequests.Include(br => br.Vendor).Include(br => br.Bottle);
+            var bottleRequests = _Mapper.Map<ICollection<_BottleRequest>>(db.BottleRequests.Include(br => br.Vendor).Include(br => br.Bottle).ToList());
             return bottleRequests;
         }
 
