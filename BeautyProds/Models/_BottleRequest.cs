@@ -14,6 +14,8 @@ namespace BeautyProds.Models
         public System.DateTime DueDate { get; set; }
         public byte SendNotification { get; set; }
         public int BottleID { get; set; }
+        public string shortDate  { get; set; }
+
         public virtual _Bottle Bottle { get; set; }
         public virtual _Vendor Vendor { get; set; }
     }

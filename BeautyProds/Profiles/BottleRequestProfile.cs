@@ -11,7 +11,7 @@ namespace BeautyProds.Profiles
     {
         public BottleRequestProfile()
         {
-            CreateMap<_BottleRequest, BottleRequest>().ReverseMap();
+            CreateMap<BottleRequest, _BottleRequest>().ForMember(dest => dest.shortDate, m => m.Ignore()).ReverseMap();
         }
     }
 }

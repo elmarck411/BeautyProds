@@ -2,30 +2,71 @@
 <html>
 <head>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.js"
-            integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
     <meta charset="utf-8" />
     <script>
         var uri = 'api/BottleRequests';
+        var totalRows = 0;
         $(document).ready(function () {
-      // Send an AJAX request
-      $.getJSON(uri)
-          .done(function (data) {
-            // On success, 'data' contains a list of BottleRequests.
-              $.each(data, function (key, item) {
-                  //alert("OK");
-               //Add a list item for the product.
-              $('<li>', { text: item.ReqQuantity  + " " + item.Vendor.Company}).appendTo($('#bottleRequests'));
-            });
-          });
-    });
-    </script>
+            // Send an AJAX request
+            $.getJSON(uri)
+                .done(function (data) {
+                    // On success, 'data' contains a list of BottleRequests.
+                    var bottleReqData = '';
 
+                    $.each(data, function (key, value) {
+                        //alert("OK");
+                        //Add bottleReqs values
+                        bottleReqData += '<tr>';
+                        bottleReqData += '<td>' + value.Vendor.Company + '</td>';
+                        bottleReqData += '<td>' + value.Bottle.Name + '</td>';
+                        bottleReqData += '<td><input type="number" id="ReqQuantity"  name="ReqQuantity" value="' + value.ReqQuantity + '"></td>';
+                        bottleReqData += '<td><input type="text" id="duedate_' + (totalRows+1) + '" value ="' + value.shortDate +'" ></td>';
+                        bottleReqData += '<td>' + 'NotifDate' + '</td>';
+                        bottleReqData += '<td> <div class="custom-control custom-switch">'
+                                            +'<input type="checkbox" class="custom-control-input" id="switch' +(totalRows+1) +'">'
+                                            + '<label class="custom-control-label" for="switch'+(totalRows+1)+'"></label>'
+                                            + '</div></td >';
+                        bottleReqData += '</tr>';
+                        totalRows++;
+                    });
+                    $('#bottlereq_table').append(bottleReqData);
+                    for (var i = 1; i <= totalRows; i++) {
+                        $("#duedate_" + i).datepicker(
+                            {
+                                minDate: 0,
+                                dateFormat: "m/d/yy"
+                            }
+                         );
+                    }
+                });
+        });
+    </script>
     <title></title>
 </head>
 <body>
     <h2>All Products</h2>
     <ul id="bottleRequests" />
+    <!--Start Table-->
+    <div class="container">
+        <h2>Bottle Requests</h2>
+        <table class="table table-active table-striped" id="bottlereq_table">
+            <tr>
+                <th>Company</th>
+                <th>Bottle Description</th>
+                <th>Required Quantity</th>
+                <th>Due Date</th>
+                <th>Notification Date</th>
+                <th>Send Notification</th>
+            </tr>
+
+        </table>
+    </div>
+
 </body>
 </html>

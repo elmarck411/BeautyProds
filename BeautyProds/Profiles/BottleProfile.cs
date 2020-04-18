@@ -11,7 +11,7 @@ namespace BeautyProds.Profiles
     {
         public BottleProfile()
         {
-            CreateMap<_Bottle,Bottle>().ReverseMap();
+            CreateMap<Bottle,_Bottle>().ReverseMap();
         }
     }
 }

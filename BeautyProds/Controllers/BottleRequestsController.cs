@@ -36,6 +36,11 @@ namespace BeautyProds.Controllers
         public IEnumerable<_BottleRequest> GetBottleRequests()
         {
             var bottleRequests = _Mapper.Map<ICollection<_BottleRequest>>(db.BottleRequests.Include(br => br.Vendor).Include(br => br.Bottle).ToList());
+            foreach (var item in bottleRequests)
+            {
+                item.shortDate = item.DueDate.ToShortDateString();
+            }
+
             return bottleRequests;
         }
 

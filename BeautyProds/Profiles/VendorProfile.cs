@@ -11,7 +11,7 @@ namespace BeautyProds.Profiles
     {
         public VendorProfile()
         {
-            CreateMap<_Vendor, Vendor>().ReverseMap();
+            CreateMap<Vendor, _Vendor>().ReverseMap();
            
         }
     }
