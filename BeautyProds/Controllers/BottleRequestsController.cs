@@ -92,17 +92,39 @@ namespace BeautyProds.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+
         // POST: api/BottleRequests
-        [ResponseType(typeof(BottleRequest))]
-        public async Task<IHttpActionResult> PostBottleRequest(BottleRequest bottleRequest)
+        [ResponseType(typeof(_BottleRequest))]
+        public async Task<IHttpActionResult> PostBottleRequest(_BottleRequest bottleRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var entityBR = _Mapper.Map<BottleRequest>(bottleRequest);
+            db.Entry(entityBR).State = EntityState.Modified;
 
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BottleRequestExists(entityBR.ID))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.OK);
+            /*
             db.BottleRequests.Add(bottleRequest);
             await db.SaveChangesAsync();
+            */
 
             return CreatedAtRoute("DefaultApi", new { id = bottleRequest.ID }, bottleRequest);
         }
