@@ -7,9 +7,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
+    <script type="text/javascript" src="Scripts/date-en-US.js"></script>
     <meta charset="utf-8" />
     <script>
+        const notifDays = 5;
         var uri = 'api/BottleRequests';
         var totalRows = 0;
         $(document).ready(function () {
@@ -22,16 +23,17 @@
                     $.each(data, function (key, value) {
                         //alert("OK");
                         //Add bottleReqs values
+                        var currentRow = (totalRows + 1);
                         bottleReqData += '<tr>';
                         bottleReqData += '<td>' + value.Vendor.Company + '</td>';
                         bottleReqData += '<td>' + value.Bottle.Name + '</td>';
                         bottleReqData += '<td><input type="number" id="ReqQuantity"  name="ReqQuantity" value="' + value.ReqQuantity + '"></td>';
-                        bottleReqData += '<td><input type="text" id="duedate_' + (totalRows+1) + '" value ="' + value.shortDate +'" ></td>';
-                        bottleReqData += '<td>' + 'NotifDate' + '</td>';
+                        bottleReqData += '<td><input type="text" id="duedate_' + currentRow + '" value ="' + value.shortDate + '" ></td>';
+                        bottleReqData += '<td><div id ="notifDate_' + currentRow +'" >' + notificationDate(value.shortDate) + '</div></td>';
                         bottleReqData += '<td> <div class="custom-control custom-switch">'
-                                            +'<input type="checkbox" class="custom-control-input" id="switch' +(totalRows+1) +'">'
-                                            + '<label class="custom-control-label" for="switch'+(totalRows+1)+'"></label>'
-                                            + '</div></td >';
+                            + '<input type="checkbox" class="custom-control-input" id="switch' + currentRow + '">'
+                            + '<label class="custom-control-label" for="switch' + currentRow + '"></label>'
+                            + '</div></td >';
                         bottleReqData += '</tr>';
                         totalRows++;
                     });
@@ -40,12 +42,21 @@
                         $("#duedate_" + i).datepicker(
                             {
                                 minDate: 0,
-                                dateFormat: "m/d/yy"
+                                dateFormat: "m/d/yy",
+                                onSelect: function (dateText, changedItem) {
+                                    var itemno = (changedItem.id).split("_")[1];
+                                    $("#notifDate_" + itemno).text(notificationDate(dateText));
+                                }
                             }
-                         );
+                        );
                     }
                 });
         });
+
+        //Function to substract notifDays days to date
+        function notificationDate(shortDate) {
+            return Date.parse(shortDate).addDays(-notifDays).toString("M/d/yyyy");
+        }
     </script>
     <title></title>
 </head>
