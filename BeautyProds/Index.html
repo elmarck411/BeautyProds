@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script type="text/javascript" src="Scripts/date-en-US.js"></script>
+    <meta charset="utf-8" />
+    <script>
+        const notifDays = 5;
+        var uri = 'api/BottleRequests';
+        var totalRows = 0;
+        $(document).ready(function () {
+            // Send an AJAX request
+            $.getJSON(uri)
+                .done(function (data) {
+                    // On success, 'data' contains a list of BottleRequests.
+                    var bottleReqData = '';
+
+                    $.each(data, function (key, value) {
+                        //alert("OK");
+                        //Add bottleReqs values
+                        var currentRow = (totalRows + 1);
+                        var checkedString = value.SendNotification ? "checked" :""
+                        bottleReqData += '<tr>';
+                        bottleReqData += '<input type="hidden" id="id_' + currentRow + '" value="' + value.ID + '">';
+                        bottleReqData += '<input type="hidden" id="vendorid_' + currentRow + '" value="' + value.VendorID + '">';
+                        bottleReqData += '<input type="hidden" id="bottleid_' + currentRow + '" value="' + value.BottleID + '">';
+                        bottleReqData += '<td>' + value.Vendor.Company + '</td>';
+                        bottleReqData += '<td>' + value.Bottle.Name + '</td>';
+                        bottleReqData += '<td><input type="number" id="reqqty_' + currentRow + '" value="' + value.ReqQuantity + '"></td>';
+                        bottleReqData += '<td><input type="text" id="duedate_' + currentRow + '" value ="' + value.shortDate + '" ></td>';
+                        bottleReqData += '<td><div id ="notifDate_' + currentRow +'" >' + notificationDate(value.shortDate) + '</div></td>';
+                        bottleReqData += '<td> <div class="custom-control custom-switch">'
+                            + '<input type="checkbox" class="custom-control-input" id="sendnotif_' + currentRow + '" '+ checkedString +' >'
+                            + '<label class="checknotif custom-control-label" for="sendnotif_' + currentRow + '"></label>'
+                            + '</div></td >';
+                        bottleReqData += '<td><div id="buttonContainer" style="text-align:center">'
+                            + '<button type="button" id ="saveBtn_' + currentRow +'" data-itemno="' + currentRow +'" class="saveData btn btn-success">Save</button> </div></td>';
+                        bottleReqData += '</tr>';
+                        totalRows++;
+                    });
+                    $('#bottlereq_table').append(bottleReqData);
+                    for (var i = 1; i <= totalRows; i++) {
+                        $("#duedate_" + i).datepicker(
+                            {
+                                minDate: 0,
+                                dateFormat: "m/d/yy",
+                                onSelect: function (dateText, changedItem) {
+                                    var itemno = (changedItem.id).split("_")[1];
+                                    $("#notifDate_" + itemno).text(notificationDate(dateText));
+                                }
+                            }
+                        );
+                    }
+                });
+        });
+
+        //Function to substract notifDays days to date
+        function notificationDate(shortDate) {
+            return Date.parse(shortDate).addDays(-notifDays).toString("M/d/yyyy");
+        }
+
+        
+       
+
+
+    </script>
+    <title></title>
+</head>
+<body>
+    <ul id="bottleRequests" />
+    <!--Start Table-->
+    <div class="container">
+        <h2>Bottle Requests</h2>
+        <table class="table table-active table-striped" id="bottlereq_table">
+            <tr>
+                <th style="text-align:center">Company</th>
+                <th style="text-align:center">Bottle Description</th>
+                <th style="text-align:center">Required Qty</th>
+                <th style="text-align:center">Due Date</th>
+                <th style="text-align:center">Notif. Date</th>
+                <th style="text-align:center">Send Notif.</th>
+                <th style="text-align:center"></th>
+            </tr>
+        </table>
+    </div>
+    <script>
+
+        //-----SAVE DATA
+        $(document).on('click', '.saveData', function (e) {
+            var itemno = $(this).attr("data-itemno");
+            var checkelem = $("#sendnotif_" + itemno);
+            var bottleReq = {
+                ID:                 $("#id_" + itemno).val(),
+                VendorID:           $("#vendorid_" + itemno).val(),
+                BottleID:           $("#bottleid_" + itemno).val(),
+                ReqQuantity:        $("#reqqty_" + itemno).val(),
+                DueDate: $("#duedate_" + itemno).val(),
+                SendNotification:  checkelem[0].checked ? "1" :"0"
+            };
+                $.ajax({
+                    type: "POST",
+                    data :JSON.stringify(bottleReq),
+                    url: "api/BottleRequests",
+                    contentType: "application/json"
+
+                }).done(function( data ) {
+                    alert("Saved" + data);
+                  });
+            });
+
+    </script>
+
+</body>
+</html>
