@@ -216,6 +216,7 @@
       <DependentUpon>BeautyProdsEF.edmx</DependentUpon>
       <LastGenOutput>BeautyProdsEF.cs</LastGenOutput>
     </Content>
+    <Content Include="TestDeploy.html" />
     <Content Include="Index.html" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
