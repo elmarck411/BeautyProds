@@ -16,7 +16,7 @@ namespace BeautyProds
             routes.MapRoute(
                 name: "Default",
                 //url: "{controller}/{action}/{id}",
-                url: "Index.html",
+                url: "TestDeploy.html",
                 defaults: new { controller = "BottleRequests", action = "Index", id = UrlParameter.Optional }
             );
         }
