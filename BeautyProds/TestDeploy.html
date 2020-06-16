@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script type="text/javascript" src="Scripts/date-en-US.js"></script>
+    <meta charset="utf-8" />
+    <script>
+        const notifDays = 5;
+        var uri = 'api/BottleRequests';
+        var totalRows = 0;
+        $(document).ready(function () {
+            // Send an AJAX request
+            $.getJSON(uri)
+                .done(function (data) {
+                    // On success, 'data' contains a list of BottleRequests.
+                    var bottleReqData = '';
+
+                    $.each(data, function (key, value) {
+                        alert("Key:" + key);
+                        alert("value:" + value.VendorID);
+                    });
+                });
+        });
+
+    </script>
+    <title></title>
+</head>
+<body>
+    <ul id="bottleRequests" />
+    <!--Start Table-->
+    <div class="container">
+        <h2>Bottle Requests</h2>
+        <table class="table table-active table-striped" id="bottlereq_table">
+            <tr>
+                <th style="text-align:center">Company</th>
+                <th style="text-align:center">Bottle Description</th>
+                <th style="text-align:center">Required Qty</th>
+                <th style="text-align:center">Due Date</th>
+                <th style="text-align:center">Notif. Date</th>
+                <th style="text-align:center">Send Notif.</th>
+                <th style="text-align:center"></th>
+            </tr>
+        </table>
+    </div>
+    <script>
+    </script>
+
+</body>
+</html>
