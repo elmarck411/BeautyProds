@@ -4,6 +4,7 @@
     <TargetFramework>net47</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="2.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="System.Spatial" Version="5.8.3" />
     <PackageReference Include="Microsoft.Data.Edm" Version="5.8.3" />
