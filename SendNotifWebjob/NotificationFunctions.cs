@@ -22,7 +22,7 @@ namespace SendNotifWebjob
         public void SendEmail()
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Marcelo", "marcelorangelsanchez@gmail.com"));
+            message.From.Add(new MailboxAddress("Marcelo", "marcelorangelsanchez@hotmail.com"));
             message.To.Add(new MailboxAddress("Marce Recipient", "marcelorangelsanchez@gmail.com"));
             message.Subject = "Test Message";
             var builder = new BodyBuilder();
@@ -74,9 +74,9 @@ namespace SendNotifWebjob
 
             using (var client = new SmtpClient())
             {
-                client.Connect("smtp.gmail.com", 587, false);
+                client.Connect("smtp.live.com", 587, false);
                 // Note: only needed if the SMTP server requires authentication
-                client.Authenticate("marcelorangelsanchez@gmail.com", "");
+                client.Authenticate("marcelorangelsanchez@hotmail.com", "");
                 client.Send(message);
                 client.Disconnect(true);
             }
