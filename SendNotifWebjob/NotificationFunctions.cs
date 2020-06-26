@@ -1,75 +1,79 @@
-﻿using MailKit.Net.Smtp;
+﻿using System.Data.Entity;
+using BeautyProdsEF;
+using MailKit.Net.Smtp;
 using Microsoft.Azure.WebJobs;
 using MimeKit;
+using SendNotifWebJob.Managers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace SendNotifWebjob
 {
     public class NotificationFunctions
     {
+        private DataManager dm = new DataManager();
+            
         [NoAutomaticTrigger]
         public void SendNotifications(TextWriter log)
         {
-            log.WriteLine("Starts SendNotifications Functions calls");
-            SendEmail();
+            List<BottleRequest> brNotifications = null;
+            try
+            {
+                //Read the table 
+                log.WriteLine("Starts SendNotifications Functions calls");
+                using (var context = new BeautyProdsEntities())
+                {
+                    brNotifications = context.BottleRequests
+                        .Where(br => br.SendNotification == 1
+                                     && br.NotificationSent == false)
+                        .Include("Vendor")
+                        .Include("Bottle")
+                        .ToList();
+                }
+
+                foreach (var notification in brNotifications)
+                {
+                    if(DateTime.Now.Date.AddDays(5) == notification.DueDate)
+                    {
+                        SendEmail(notification);
+                    }
+                    
+                }
+
+                // var allNotifications = dm.getList<BottleRequest>();
+               
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public void SendEmail()
+        public void SendEmail( BottleRequest notificationInfo)
         {
+            //var assembly = Assembly.GetExecutingAssembly();
+            //var resourcesNames = assembly.GetManifestResourceNames();
+            //string resourceName = resourcesNames.FirstOrDefault(str => str.EndsWith("BRNotifTemplate.html"));
+
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Marcelo", "marcelorangelsanchez@hotmail.com"));
-            message.To.Add(new MailboxAddress("Marce Recipient", "marcelorangelsanchez@gmail.com"));
-            message.Subject = "Test Message";
+            message.From.Add(new MailboxAddress("BeautyProds Corp.", "marcelorangelsanchez@hotmail.com"));
+            message.To.Add(new MailboxAddress(notificationInfo.Vendor.Company, notificationInfo.Vendor.ContactEmail));
+            message.Subject = "Bottles Supply Requirement, Due Date: " + notificationInfo.DueDate.ToShortDateString();
             var builder = new BodyBuilder();
-            builder.HtmlBody = string.Format(@"<p>Hey Alice,<br>
-            <p>What are you up to this weekend? Monica is throwing one of her parties on
-            Saturday and I was hoping you could make it.<br>
-            <p>Will you be my +1?<br>
-            <p>-- Joey<br>
-<br/><br/>
-<table>
-  <tr>
-    <th>Company</th>
-    <th>Contact</th>
-    <th>Country</th>
-  </tr>
-  <tr>
-    <td>Alfreds Futterkiste</td>
-    <td>Maria Anders</td>
-    <td>Germany</td>
-  </tr>
-  <tr>
-    <td>Centro comercial Moctezuma</td>
-    <td>Francisco Chang</td>
-    <td>Mexico</td>
-  </tr>
-  <tr>
-    <td>Ernst Handel</td>
-    <td>Roland Mendel</td>
-    <td>Austria</td>
-  </tr>
-  <tr>
-    <td>Island Trading</td>
-    <td>Helen Bennett</td>
-    <td>UK</td>
-  </tr>
-  <tr>
-    <td>Laughing Bacchus Winecellars</td>
-    <td>Yoshi Tannamuri</td>
-    <td>Canada</td>
-  </tr>
-  <tr>
-    <td>Magazzini Alimentari Riuniti</td>
-    <td>Giovanni Rovelli</td>
-    <td>Italy</td>
-  </tr>
-</table>
-                    ");
+            StringBuilder templateText = new StringBuilder(File.ReadAllText("Templates/BRNotifTemplate.html"));
+            templateText.Replace("$$CurrentDate$$", DateTime.Now.ToShortDateString());
+            templateText.Replace("$$CompanyName$$", notificationInfo.Vendor.Company);
+            templateText.Replace("$$BottleQty$$", notificationInfo.ReqQuantity.ToString());
+            templateText.Replace("$$BottleName$$", notificationInfo.Bottle.Name);
+            templateText.Replace("$$DueDate$$", notificationInfo.DueDate.ToShortDateString());
+
+            builder.HtmlBody = templateText.ToString();
+
             message.Body = builder.ToMessageBody();
 
             using (var client = new SmtpClient())

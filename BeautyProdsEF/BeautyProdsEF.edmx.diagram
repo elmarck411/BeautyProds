@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="cc0d55df9c364d4f95fd2d2cc3ed6b36" Name="Diagram1" >
+        <EntityTypeShape EntityType="BeautyProdsModel.Bottle" Width="1.5" PointX="0.75" PointY="5.5" />
+        <EntityTypeShape EntityType="BeautyProdsModel.BottleRequest" Width="1.5" PointX="3" PointY="1" />
+        <EntityTypeShape EntityType="BeautyProdsModel.Vendor" Width="1.5" PointX="0.75" PointY="1.375" />
+        <AssociationConnector Association="BeautyProdsModel.FK_BottleRequest_Bottle" />
+        <AssociationConnector Association="BeautyProdsModel.FK_BottleRequest_Vendor" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

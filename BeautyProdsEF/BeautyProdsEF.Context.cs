@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SendNotifWebjob
+namespace BeautyProdsEF
 {
     using System;
     using System.Data.Entity;

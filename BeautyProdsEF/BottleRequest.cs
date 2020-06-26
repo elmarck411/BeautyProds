@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SendNotifWebjob
+namespace BeautyProdsEF
 {
     using System;
     using System.Collections.Generic;
@@ -20,6 +20,7 @@ namespace SendNotifWebjob
         public System.DateTime DueDate { get; set; }
         public byte SendNotification { get; set; }
         public int BottleID { get; set; }
+        public bool NotificationSent { get; set; }
     
         public virtual Bottle Bottle { get; set; }
         public virtual Vendor Vendor { get; set; }
