@@ -24,67 +24,72 @@ namespace SendNotifWebjob
             List<BottleRequest> brNotifications = null;
             try
             {
+                DateTime SystemDueDate = DateTime.Now.Date.AddDays(5);
                 //Read the table 
-                log.WriteLine("Starts SendNotifications Functions calls");
+                log.WriteLine("Starts SendNotifications Functions calls, System Due Date: " + SystemDueDate);
                 using (var context = new BeautyProdsEntities())
                 {
                     brNotifications = context.BottleRequests
                         .Where(br => br.SendNotification == 1
-                                     && br.NotificationSent == false)
+                                     && br.NotificationSent == false
+                                     && SystemDueDate == br.DueDate)
                         .Include("Vendor")
                         .Include("Bottle")
                         .ToList();
-                }
-
-                foreach (var notification in brNotifications)
-                {
-                    if(DateTime.Now.Date.AddDays(5) == notification.DueDate)
+                
+                    log.WriteLine("Found " + brNotifications.Count + "Notifications to be sent");
+                    foreach (var notification in brNotifications)
                     {
-                        SendEmail(notification);
-                    }
-                    
-                }
 
-                // var allNotifications = dm.getList<BottleRequest>();
-               
+                        log.WriteLine("Sending notification to: " + notification.Vendor.Company + ", " + notification.ReqQuantity+ " Bottles");
+                        SendEmail(notification, log);
+                        log.WriteLine("Notification Sent!");
+                        notification.NotificationSent = true;
+                        context.SaveChanges();
+                    }
+                }
             }
             catch (Exception ex)
             {
+                log.WriteLine("Exception on SendNotifications Function: " + ex.Message);
                 throw ex;
             }
         }
 
-        public void SendEmail( BottleRequest notificationInfo)
+        public void SendEmail( BottleRequest notificationInfo, TextWriter log)
         {
-            //var assembly = Assembly.GetExecutingAssembly();
-            //var resourcesNames = assembly.GetManifestResourceNames();
-            //string resourceName = resourcesNames.FirstOrDefault(str => str.EndsWith("BRNotifTemplate.html"));
-
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("BeautyProds Corp.", "marcelorangelsanchez@hotmail.com"));
-            message.To.Add(new MailboxAddress(notificationInfo.Vendor.Company, notificationInfo.Vendor.ContactEmail));
-            message.Subject = "Bottles Supply Requirement, Due Date: " + notificationInfo.DueDate.ToShortDateString();
-            var builder = new BodyBuilder();
-            StringBuilder templateText = new StringBuilder(File.ReadAllText("Templates/BRNotifTemplate.html"));
-            templateText.Replace("$$CurrentDate$$", DateTime.Now.ToShortDateString());
-            templateText.Replace("$$CompanyName$$", notificationInfo.Vendor.Company);
-            templateText.Replace("$$BottleQty$$", notificationInfo.ReqQuantity.ToString());
-            templateText.Replace("$$BottleName$$", notificationInfo.Bottle.Name);
-            templateText.Replace("$$DueDate$$", notificationInfo.DueDate.ToShortDateString());
-
-            builder.HtmlBody = templateText.ToString();
-
-            message.Body = builder.ToMessageBody();
-
-            using (var client = new SmtpClient())
+            try
             {
-                client.Connect("smtp.live.com", 587, false);
-                // Note: only needed if the SMTP server requires authentication
-                client.Authenticate("marcelorangelsanchez@hotmail.com", "");
-                client.Send(message);
-                client.Disconnect(true);
-            }
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("BeautyProds Corp.", "marcelorangelsanchez@hotmail.com"));
+                message.To.Add(new MailboxAddress(notificationInfo.Vendor.Company, notificationInfo.Vendor.ContactEmail));
+                message.Subject = "Bottles Supply Requirement, Due Date: " + notificationInfo.DueDate.ToShortDateString();
+                var builder = new BodyBuilder();
+                StringBuilder templateText = new StringBuilder(File.ReadAllText("Templates/BRNotifTemplate.html"));
+                templateText.Replace("$$CurrentDate$$", DateTime.Now.ToShortDateString());
+                templateText.Replace("$$CompanyName$$", notificationInfo.Vendor.Company);
+                templateText.Replace("$$BottleQty$$", notificationInfo.ReqQuantity.ToString());
+                templateText.Replace("$$BottleName$$", notificationInfo.Bottle.Name);
+                templateText.Replace("$$DueDate$$", notificationInfo.DueDate.ToShortDateString());
 
+                builder.HtmlBody = templateText.ToString();
+
+                message.Body = builder.ToMessageBody();
+
+                using (var client = new SmtpClient())
+                {
+                    client.Connect("smtp.live.com", 587, false);
+                    // Note: only needed if the SMTP server requires authentication
+                    client.Authenticate("marcelorangelsanchez@hotmail.com", "");
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.WriteLine("Exception on SendEmail Method: " + ex.Message);
+                throw ex;
+            }
         }
     }
 }
